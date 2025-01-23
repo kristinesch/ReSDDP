@@ -47,7 +47,7 @@ feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=o
 
 # Save feasibility cuts to file
 file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
-#save(file, "feas_spaces", feas_spaces)
+save(file, "feas_spaces", feas_spaces)
 
 # Load feasibility cuts from file
 data = JLD2.load(file) 
