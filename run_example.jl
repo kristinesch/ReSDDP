@@ -1,3 +1,4 @@
+""""--------------------Package imports etc--------------------------"""
 import Pkg
 import Revise
 
@@ -21,44 +22,45 @@ optimizer = JuMP.optimizer_with_attributes(
 )
 
 println("Threads available: ",Threads.nthreads())
+"""---------------------------------------------------------------"""
 
-
+"""---------------------Input params------------------------------"""
 case = "4area"
+calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
+"""---------------------------------------------------------------"""
 
-# datapath = "/cluster/home/krisch/repos/datasets/"
-# resultpath = "/cluster/home/krisch/res100results/"
 
+"""-----------------Path configuration and data loading-------------"""
+#set paths to input data and result folder from config file
 config = YAML.load_file("config.yaml")
-
 system = config["system"]
-
 if (system=="win")
     case_suffix = case*"\\"
 end
 if (system=="linux")
     case_suffix = case*"/"
 end
-
-
 datapath = joinpath(config["datapath"], case_suffix)
 resultpath = joinpath(config["resultpath"], case_suffix)
 
-# datapath = joinpath("/cluster/home/krisch/repos/datasets/", case)
-# resultpath = joinpath("/cluster/home/krisch/res100results/", case)
-
+#load data
 model = load(datapath, parameters) 
 inflow_model = load_inflow(datapath, model, parameters)
 
 using JLD2 
 using FileIO 
 
-#Compute feasibility cuts 
-println("Compute feasibility cuts..")
-feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+"""---------------------------------------------------------------------"""
 
-# Save feasibility cuts to file
-file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
-save(file, "feas_spaces", feas_spaces)
+if (calculate_feasibility_cuts)
+    #Compute feasibility cuts 
+    println("Compute feasibility cuts..")
+    feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+
+    # Save feasibility cuts to file
+    file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
+    save(file, "feas_spaces", feas_spaces)
+end
 
 # Load feasibility cuts from file
 data = JLD2.load(file) 
