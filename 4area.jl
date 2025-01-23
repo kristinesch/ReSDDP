@@ -43,7 +43,7 @@ using FileIO
 
 #Compute feasibility cuts 
 println("Compute feasibility cuts..")
-#feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
 
 # Save feasibility cuts to file
 file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
