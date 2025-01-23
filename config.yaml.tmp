@@ -1,0 +1,7 @@
+# datapath: M:\Documents\reSDDP\datasets
+# resultpath: M:\Documents\reSDDP\results
+# system: win
+
+datapath: /cluster/home/krisch/repos/datasets/
+resultpath: /cluster/home/krisch/res100results/
+system: linux
