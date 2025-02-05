@@ -1,4 +1,4 @@
-""""--------------------Package imports etc--------------------------"""
+
 import Pkg
 import Revise
 
@@ -22,15 +22,14 @@ optimizer = JuMP.optimizer_with_attributes(
 )
 
 println("Threads available: ",Threads.nthreads())
-"""---------------------------------------------------------------"""
 
-"""---------------------Input params------------------------------"""
+
+
 case = "4area"
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
-"""---------------------------------------------------------------"""
 
 
-"""-----------------Path configuration and data loading-------------"""
+
 #set paths to input data and result folder from config file
 config = YAML.load_file("config.yaml")
 system = config["system"]
@@ -50,7 +49,6 @@ inflow_model = load_inflow(datapath, model, parameters)
 using JLD2 
 using FileIO 
 
-"""---------------------------------------------------------------------"""
 
 if (calculate_feasibility_cuts)
     #Compute feasibility cuts 
