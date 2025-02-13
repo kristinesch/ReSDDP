@@ -16,16 +16,21 @@ import YAML
 import CPLEX
 optimizer = JuMP.optimizer_with_attributes(
     CPLEX.Optimizer,
+    #"CPX_PARAM_THREADS" => 2,
     "CPX_PARAM_SCRIND" => 0,
     "CPX_PARAM_PREIND" => 1,
     "CPX_PARAM_LPMETHOD" => 2 #1=primal, 2=dual, 3=network, 4=barrier
 )
+
 
 println("Threads available: ",Threads.nthreads())
 
 
 
 case = "4area"
+
+println("Enter label: ")
+label = readline()
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
 
 
@@ -35,12 +40,16 @@ config = YAML.load_file("config.yaml")
 system = config["system"]
 if (system=="win")
     case_suffix = case*"\\"
+    case_suffix_res = case*label*"\\"
 end
 if (system=="linux")
     case_suffix = case*"/"
+    case_suffix_res = case*label*"/"
 end
 datapath = joinpath(config["datapath"], case_suffix)
-resultpath = joinpath(config["resultpath"], case_suffix)
+resultpath = joinpath(config["resultpath"], case_suffix_res)
+
+mkpath(resultpath)
 
 #load data
 model = load(datapath, parameters) 
