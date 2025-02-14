@@ -22,13 +22,21 @@ optimizer = JuMP.optimizer_with_attributes(
     "CPX_PARAM_LPMETHOD" => 2 #1=primal, 2=dual, 3=network, 4=barrier
 )
 
-
 println("Threads available: ",Threads.nthreads())
 
 #case = "4area"
-case = "expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"
-label = ""
+cases = ["4area","expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"]
 
+#for selecting which case to run
+println("Select case: ")
+for (i, c) in enumerate(cases)
+    println(string(i)*": "*c)
+end
+case_i = readline()
+case = cases[parse(Int64,case_i)]
+
+#Enter optional extra label
+label = ""
 println("Enter label: ")
 label = readline()
 
