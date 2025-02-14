@@ -11,7 +11,7 @@ ConvEps = 1.0E-3
 NScen = 10
 NWindScen = 5 #5
 NScenSim = 10 #10
-NResid = NBranch = 5
+NResid = NBranch = 10 #changed to fix loaderror  NResIdRead != NResid in inflow model for hydrocen data #5
 NStage = 2*52 #strategi
 NStageSim = 1*52 #final simulation
 LNewInflowModel = false

@@ -25,13 +25,29 @@ optimizer = JuMP.optimizer_with_attributes(
 
 println("Threads available: ",Threads.nthreads())
 
-case = "4area"
+#case = "4area"
+case = "expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"
 label = ""
 
 println("Enter label: ")
 label = readline()
-calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
 
+#read config file
+config = YAML.load_file("config.yaml")
+
+#turn on or off different steps
+calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
+detailed_sim = true
+save_strategy_to_file = true
+if (config["calculate_feasibility_cuts"] == "false")
+    calculate_feasibility_cuts = false
+end
+if (config["detailed_sim"] == "false")
+    detailed_sim = false
+end
+if (config["save_strategy_to_file"] == "false")
+    save_strategy_to_file = false
+end
 
 if (LFeasCut == true)
     if (LFeasPerStage == false)
@@ -45,7 +61,7 @@ label = label*"-"*string(NScen)*"-"*string(NK)
 
 
 #set paths to input data and result folder from config file
-config = YAML.load_file("config.yaml")
+
 system = config["system"]
 if (system=="win")
     case_suffix = case*"\\"
@@ -96,13 +112,15 @@ using Serialization
 serialize(joinpath(@__DIR__, "strategy.jls"), strategy) # Save cuts to file
 strategy = deserialize(joinpath(@__DIR__, "strategy.jls")) # Load cuts from file
 
-# Save strategy to file
-file = File(format"JLD2", joinpath(@__DIR__, "strategy.jld2"))
-save(file, "strategy", strategy)
+if (save_strategy_to_file)
+    # Save strategy to file
+    file = File(format"JLD2", joinpath(@__DIR__, "strategy.jld2"))
+    save(file, "strategy", strategy)
 
-# Load strategy from file
-data = JLD2.load(file) 
-strategy = data["strategy"]
+    # Load strategy from file
+    data = JLD2.load(file) 
+    strategy = data["strategy"]
+end
 
 # Simulate aggregated
 println("Start simulation ..")
@@ -115,8 +133,10 @@ print_dims(resultpath,model.NHSys,parameters.Control.NStage,parameters.Control.N
 print_strategy(resultpath,strategy,parameters.Control.LCostApprox)
 print_feas(resultpath,feas_spaces[1],model.NHSys)
 
-# println("Start detailed simulation ..")
-# results_det = simulate_detailed(model, inflow_model, parameters, strategy)
+if (detailed_sim)
+    println("Start detailed simulation ..")
+    results_det = simulate_detailed(model, inflow_model, parameters, strategy)
 
-# println("Write detailed results ..")
-# print_detailed_results(resultpath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData)
+    println("Write detailed results ..")
+    print_detailed_results(resultpath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData)
+end
