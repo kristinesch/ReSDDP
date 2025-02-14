@@ -25,14 +25,23 @@ optimizer = JuMP.optimizer_with_attributes(
 
 println("Threads available: ",Threads.nthreads())
 
-
-
 case = "4area"
+label = ""
 
 println("Enter label: ")
 label = readline()
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
 
+
+if (LFeasCut == true)
+    if (LFeasPerStage == false)
+        label = label*"-feas1"
+    end
+    else
+        label = label*"-feasN"
+end
+
+label = label*"-"*string(NScen)*"-"*string(NK)
 
 
 #set paths to input data and result folder from config file
@@ -58,15 +67,16 @@ inflow_model = load_inflow(datapath, model, parameters)
 using JLD2 
 using FileIO 
 
+ # Save feasibility cuts to file
+file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
+
 
 if (calculate_feasibility_cuts)
     #Compute feasibility cuts 
     println("Compute feasibility cuts..")
     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
-
-    # Save feasibility cuts to file
-    file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
     save(file, "feas_spaces", feas_spaces)
+   
 end
 
 # Load feasibility cuts from file
@@ -82,9 +92,9 @@ init_val = init_system(model, parameters)
 println("Start strategy computation..")
 
 train!(strategy, init_val, model, inflow_model, feas_spaces, parameters; optimizer=optimizer)
-# using Serialization
-# serialize(joinpath(@__DIR__, "strategy.jls"), strategy) # Save cuts to file
-# strategy = deserialize(joinpath(@__DIR__, "strategy.jls")) # Load cuts from file
+using Serialization
+serialize(joinpath(@__DIR__, "strategy.jls"), strategy) # Save cuts to file
+strategy = deserialize(joinpath(@__DIR__, "strategy.jls")) # Load cuts from file
 
 # Save strategy to file
 file = File(format"JLD2", joinpath(@__DIR__, "strategy.jld2"))
@@ -105,8 +115,8 @@ print_dims(resultpath,model.NHSys,parameters.Control.NStage,parameters.Control.N
 print_strategy(resultpath,strategy,parameters.Control.LCostApprox)
 print_feas(resultpath,feas_spaces[1],model.NHSys)
 
-println("Start detailed simulation ..")
-results_det = simulate_detailed(model, inflow_model, parameters, strategy)
+# println("Start detailed simulation ..")
+# results_det = simulate_detailed(model, inflow_model, parameters, strategy)
 
-println("Write detailed results ..")
-print_detailed_results(resultpath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData)
+# println("Write detailed results ..")
+# print_detailed_results(resultpath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData)

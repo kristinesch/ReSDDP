@@ -1,19 +1,19 @@
 #CONTROL DATA
-LFeasCut = false
-LFeasPerStage = false
-LCostApprox = true
-LCostApproxNewCuts = true
+LFeasCut = false #turn on/off the use of feasibility cuts
+LFeasPerStage = false #if false use feasibility cuts for first week for all stages
+LCostApprox = false #true
+LCostApproxNewCuts = false #true     #i think both of these should be the same true/false state
 LWindStoch = false
 LExtreme = false
 MaxIter = 30
 CCMaxIter = 2
 ConvEps = 1.0E-3
 NScen = 10
-NWindScen = 5
-NScenSim = 10
+NWindScen = 5 #5
+NScenSim = 10 #10
 NResid = NBranch = 5
-NStage = 2*52
-NStageSim = 1*52
+NStage = 2*52 #strategi
+NStageSim = 1*52 #final simulation
 LNewInflowModel = false
 ResInitFrac = 0.60
 ResMinFrac = 0.05
@@ -36,7 +36,7 @@ NSecHour = 3600.0
 NHoursWeek = 168.0
 NInflowYear = 30 #50 (4del), 30 (Norge), 58 (Hydrocen), 30 (HydroConnect)
 NWeek = 52  #Dimensioning factor
-NK = 21  #Time steps per week
+NK = 168  #Time steps per week #21
 DT = NHoursWeek/Float64(NK)
 WeekFrac = 1.0/Float64(NK)
 CTI = ReSDDP.Time(NSecHour,NHoursWeek,NInflowYear,NWeek,NK,DT,WeekFrac)
@@ -52,8 +52,8 @@ CResPen = 1.0
 CRampPen = 1.0
 CCapPen = 1.0
 CAuxPen = 10.0
-CSpi = 2.0E-3
-CByp = 1.0E-3
+CSpi = 2.0E-3 #2.0E-3
+CByp = 1.0E-3 #1.0E-3
 CNegRes = 1.0E4
 CMinRes = 2.0
 CRat = 4.0E3
@@ -64,13 +64,13 @@ InfUB = 1.0E08
 FeasTol = 1.0E-3
 CNS = ReSDDP.Constants(MAGEFF2GWH,GWH2MAGEFF,MW2GWHWEEK,MW2GW,M3S2MM3,CEnPen,CResPen,CRampPen,CCapPen,CAuxPen,CSpi,CByp,CNegRes,CMinRes,CRat,CFeas,Big,AlphaMax,InfUB,FeasTol)
 
-#DISCRETIZATION OF FEASIBILITY SPACES
-NInfPt = 5 
-NResInitPt = 5
+#DISCRETIZATION OF FEASIBILITY SPACES #number of points along each axis of the feasibility space
+NInfPt = 5 # number of points along inflow axis
+NResInitPt = 5 
 NResEndPt = 5
-NEnPt = 5
+NEnPt = 5 #number of points along energy axis
 NRampPt = 2
-NCapPt = 2
+NCapPt = 2 #number of points along capacity axis
 CDI = ReSDDP.Discrete(NInfPt,NResInitPt,NResEndPt,NEnPt,NRampPt,NCapPt)
 
 parameters = ReSDDP.Parameters(CTR, CAGR, CTI, CNS, CDI)
