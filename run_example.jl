@@ -24,24 +24,29 @@ optimizer = JuMP.optimizer_with_attributes(
 
 println("Threads available: ",Threads.nthreads())
 
-#case = "4area"
-cases = ["4area","expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"]
+# #case = "4area"
+# cases = ["4area","expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"]
 
-#for selecting which case to run
-println("Select case: ")
-for (i, c) in enumerate(cases)
-    println(string(i)*": "*c)
-end
-case_i = readline()
-case = cases[parse(Int64,case_i)]
+# #for selecting which case to run
+# println("Select case: ")
+# for (i, c) in enumerate(cases)
+#     println(string(i)*": "*c)
+# end
+# case_i = readline()
+# case = cases[parse(Int64,case_i)]
 
-#Enter optional extra label
-label = ""
-println("Enter label: ")
-label = readline()
+# #Enter optional extra label
+# label = ""
+# println("Enter label: ")
+# label = readline()
 
 #read config file
 config = YAML.load_file("config.yaml")
+
+case = config["case"]
+label = config["label"]
+
+println(case, label)
 
 #turn on or off different steps
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
