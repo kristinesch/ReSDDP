@@ -52,6 +52,7 @@ println(case, label)
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
 detailed_sim = true
 save_strategy_to_file = true
+simulate_only = true
 
 
 if (config["calculate_feasibility_cuts"] == "false")
@@ -62,6 +63,9 @@ if (config["detailed_sim"] == "false")
 end
 if (config["save_strategy_to_file"] == "false")
     save_strategy_to_file = false
+end
+if (config["simulate_only"] == "false")
+    simulate_only = false
 end
 
 if LFeasCut == true
@@ -104,44 +108,53 @@ areas_with_feas_cuts = config["areas_with_feas_cuts"]
 using JLD2 
 using FileIO 
 
- # Save feasibility cuts to file
-file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
-
-
-if (calculate_feasibility_cuts)
-    #Compute feasibility cuts 
-    println("Compute feasibility cuts..")
-    feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-    save(file, "feas_spaces", feas_spaces)
-   
-end
-
-# Load feasibility cuts from file
-data = JLD2.load(file) 
-feas_spaces = data["feas_spaces"]
-
-ReSDDP.print(model, parameters, true, true)
-
-strategy = init_strategy(model, parameters)
-init_val = init_system(model, parameters)
-
-#Compute strategy by SDDP
-println("Start strategy computation..")
-
-train!(strategy, init_val, model, inflow_model, feas_spaces, parameters; optimizer=optimizer)
-using Serialization
-serialize(joinpath(@__DIR__, "strategy.jls"), strategy) # Save cuts to file
-strategy = deserialize(joinpath(@__DIR__, "strategy.jls")) # Load cuts from file
-
-if (save_strategy_to_file)
-    # Save strategy to file
-    file = File(format"JLD2", joinpath(@__DIR__, "strategy.jld2"))
-    save(file, "strategy", strategy)
-
+if simulate_only
     # Load strategy from file
     data = JLD2.load(file) 
     strategy = data["strategy"]
+else
+    # Save feasibility cuts to file
+    file = File(format"JLD2", joinpath(@__DIR__, "case_suffix_res_"*"feas_spaces.jld2"))
+
+    if (calculate_feasibility_cuts)
+        #Compute feasibility cuts 
+        println("Compute feasibility cuts..")
+        if (areas_with_feas_cuts != [])
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        else
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+        end
+        save(file, "feas_spaces", feas_spaces)
+    end
+
+    # Load feasibility cuts from file
+    data = JLD2.load(file) 
+    feas_spaces = data["feas_spaces"]
+
+    ReSDDP.print(model, parameters, true, true)
+
+    strategy = init_strategy(model, parameters)
+    init_val = init_system(model, parameters)
+
+    #Compute strategy by SDDP
+    println("Start strategy computation..")
+
+    train!(strategy, init_val, model, inflow_model, feas_spaces, parameters; optimizer=optimizer)
+    using Serialization
+    serialize(joinpath(@__DIR__, "case_suffix_res_"*"strategy.jls"), strategy) # Save cuts to file
+    strategy = deserialize(joinpath(@__DIR__, "case_suffix_res_"*"strategy.jls")) # Load cuts from file
+
+    if (save_strategy_to_file)
+        # Save strategy to file
+        file = File(format"JLD2", joinpath(@__DIR__, "case_suffix_res_"*"strategy.jld2"))
+        save(file, "strategy", strategy)
+
+        # Load strategy from file
+        data = JLD2.load(file) 
+        strategy = data["strategy"]
+    end
 end
+
 
 # Simulate aggregated
 println("Start simulation ..")
