@@ -129,11 +129,9 @@ else
         save(file, "feas_spaces", feas_spaces)
     end
 
-    if LFeasCut
-        # Load feasibility cuts from file
-        data = JLD2.load(file) 
-        feas_spaces = data["feas_spaces"]
-    end
+    # Load feasibility cuts from file
+    data = JLD2.load(file) 
+    feas_spaces = data["feas_spaces"]
 
     ReSDDP.print(model, parameters, true, true)
 
