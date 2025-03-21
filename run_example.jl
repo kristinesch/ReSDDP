@@ -11,6 +11,8 @@ Pkg.instantiate()
 using ReSDDP
 include("params.jl") # Import parameters
 
+println("Hello!")
+
 import JuMP
 import YAML
 import CPLEX
@@ -23,6 +25,7 @@ optimizer = JuMP.optimizer_with_attributes(
 )
 
 println("Threads available: ",Threads.nthreads())
+flush(stdout)
 
 # #case = "4area"
 # cases = ["4area","expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"]
