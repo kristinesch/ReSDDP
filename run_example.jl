@@ -121,9 +121,23 @@ if simulate_only
     data = JLD2.load(file) 
     strategy = data["strategy"]
 
+    
+
     # Load feasibility cuts from file
     #file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
-    ile = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
+    file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
+
+    if (calculate_feasibility_cuts)
+        #Compute feasibility cuts 
+        println("Compute feasibility cuts..")
+        if (areas_with_feas_cuts != [])
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        else
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+        end
+        save(file, "feas_spaces", feas_spaces)
+    end
+    
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
 else
