@@ -113,11 +113,19 @@ areas_with_feas_cuts = config["areas_with_feas_cuts"]
 using JLD2 
 using FileIO 
 
+
+#NB GENERALISER!!!
 if simulate_only
     # Load strategy from file
-    file = joinpath(@__DIR__,"strategy.jld2") #FJERN ETTER BATTPOWER FIKS!!!
+    file = joinpath(@__DIR__,"strategy.jld2") 
     data = JLD2.load(file) 
     strategy = data["strategy"]
+
+    # Load feasibility cuts from file
+    #file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
+    ile = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
+    data = JLD2.load(file) 
+    feas_spaces = data["feas_spaces"]
 else
     # Save feasibility cuts to file
     file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
