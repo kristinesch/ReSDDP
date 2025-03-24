@@ -115,6 +115,7 @@ using FileIO
 
 if simulate_only
     # Load strategy from file
+    file = joinpath(@__DIR__,"strategy.jld2") #FJERN ETTER BATTPOWER FIKS!!!
     data = JLD2.load(file) 
     strategy = data["strategy"]
 else
@@ -159,8 +160,6 @@ else
         strategy = data["strategy"]
     end
 end
-
-
 
 # Simulate aggregated
 println("Start simulation ..")
