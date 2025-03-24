@@ -121,7 +121,7 @@ if simulate_only
     data = JLD2.load(file) 
     strategy = data["strategy"]
 
-    
+    init_val = init_system(model, parameters)
 
     # Load feasibility cuts from file
     #file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
@@ -137,7 +137,7 @@ if simulate_only
         end
         save(file, "feas_spaces", feas_spaces)
     end
-    
+
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
 else
