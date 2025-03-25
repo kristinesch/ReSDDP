@@ -193,7 +193,7 @@ print_results(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.
 print_dims(resultpath,model.NHSys,parameters.Control.NStage,parameters.Control.NScenSim,strategy.NCut,parameters.Control.MaxIter,parameters.Control.CCMaxIter)
 print_strategy(resultpath,strategy,parameters.Control.LCostApprox)
 print_feas(resultpath,feas_spaces[1],model.NHSys)
-print_results_h5(datapath,results_agg,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time, model.MCon, model.AreaName)
+print_results_h5(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time, model.MCon, model.AreaName)
 
 open(joinpath(resultpath,"NScen.txt"), "w") do file
     write(file, string(NScen))
@@ -205,7 +205,7 @@ if (detailed_sim)
 
     println("Write detailed results ..")
     print_detailed_results(resultpath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData)
-    print_detailed_results_h5(datapath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData,model.MCon,model.AreaName)
+    print_detailed_results_h5(resultpath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData,model.MCon,model.AreaName)
     println("Program finished.")
 
 end
