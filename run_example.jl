@@ -9,9 +9,12 @@ Pkg.activate(@__DIR__) # Aktiverer lokalt pakkemiljø
 Pkg.instantiate()
 
 using ReSDDP
+using Random
+
 include("params.jl") # Import parameters
 
 println("Hello!")
+Random.seed!(3)
 
 import JuMP
 import YAML
@@ -19,10 +22,13 @@ import CPLEX
 optimizer = JuMP.optimizer_with_attributes(
     CPLEX.Optimizer,
     #"CPX_PARAM_THREADS" => 2,
-    "CPX_PARAM_SCRIND" => 0,
+    "CPX_PARAM_SCRIND" => 0, #1 to print log
     "CPX_PARAM_PREIND" => 1,
     "CPX_PARAM_LPMETHOD" => 2 #1=primal, 2=dual, 3=network, 4=barrier
 )
+
+#to print log
+#set_optimizer_attribute(model, "CPX_PARAM_SCRIND", 1)
 
 println("Threads available: ",Threads.nthreads())
 flush(stdout)
@@ -117,7 +123,9 @@ using FileIO
 #NB GENERALISER!!!
 if simulate_only
     # Load strategy from file
-    file = joinpath(@__DIR__,"strategy.jld2") 
+    #file = joinpath(@__DIR__,"strategy.jld2") 
+    file = File(format"JLD2", joinpath(@__DIR__, case*label*"strategy.jld2"))
+    #println(file)
     data = JLD2.load(file) 
     strategy = data["strategy"]
 
@@ -125,7 +133,9 @@ if simulate_only
 
     # Load feasibility cuts from file
     #file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
-    file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
+    #file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
+    file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
+    #println(file)
 
     if (calculate_feasibility_cuts)
         #Compute feasibility cuts 
@@ -167,7 +177,7 @@ else
     #Compute strategy by SDDP
     println("Start strategy computation..")
     flush(stdout)
-    train!(strategy, init_val, model, inflow_model, feas_spaces, parameters; optimizer=optimizer)
+    train!(strategy, init_val, model, inflow_model, feas_spaces, parameters; optimizer=optimizer, datapath = resultpath)
     using Serialization
     serialize(joinpath(@__DIR__, case*label*"strategy.jls"), strategy) # Save cuts to file
     strategy = deserialize(joinpath(@__DIR__, case*label*"strategy.jls")) # Load cuts from file
