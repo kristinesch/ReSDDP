@@ -11,10 +11,16 @@ Pkg.instantiate()
 using ReSDDP
 using Random
 
-include("params.jl") # Import parameters
+#read config file
+config = YAML.load_file("config.yaml")
+params_file = config["params_file"]
+#include("params.jl") # Import parameters
+include(params_file)
 
-println("Hello!")
-Random.seed!(3)
+
+seed = 5
+Random.seed!(seed)
+println("seed: ", seed)
 
 import JuMP
 import YAML
@@ -49,8 +55,6 @@ flush(stdout)
 # println("Enter label: ")
 # label = readline()
 
-#read config file
-config = YAML.load_file("config.yaml")
 
 case = config["case"]
 label = config["label"]
