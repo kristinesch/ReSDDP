@@ -11,6 +11,8 @@ Pkg.instantiate()
 using ReSDDP
 using Random
 
+import YAML
+
 #read config file
 config = YAML.load_file("config.yaml")
 params_file = config["params_file"]
@@ -23,7 +25,6 @@ Random.seed!(seed)
 println("seed: ", seed)
 
 import JuMP
-import YAML
 import CPLEX
 optimizer = JuMP.optimizer_with_attributes(
     CPLEX.Optimizer,
