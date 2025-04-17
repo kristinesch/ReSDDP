@@ -146,9 +146,9 @@ if simulate_only
         #Compute feasibility cuts 
         println("Compute feasibility cuts..")
         if (areas_with_feas_cuts != [])
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts, AreaMapping)
         else
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, AreaMapping)
         end
         save(file, "feas_spaces", feas_spaces)
     end

@@ -1,19 +1,22 @@
 #CONTROL DATA
-LFeasCut = false #turn on/off the use of feasibility cuts
+LFeasCut = true #turn on/off the use of feasibility cuts
 LFeasPerStage = false #if false use feasibility cuts for first week for all stages
-LCostApprox = false #true
-LCostApproxNewCuts = false #true     #i think both of these should be the same true/false state
+LCostApprox = true #true
+LCostApproxNewCuts = true #true     #i think both of these should be the same true/false state
 LWindStoch = false
 LExtreme = false
 MaxIter = 30
 CCMaxIter = 2
+
+MaxIterWCC = 3
+
 ConvEps = 1.0E-3
-NScen = 10
+NScen = 40
 NWindScen = 5 #5
 NScenSim = 10 #10
 NResid = NBranch = 10 #changed to fix loaderror  NResIdRead != NResid in inflow model for hydrocen data #5
 NStage = 2*52 #strategi
-NStageSim = 1*52 #final simulation
+NStageSim = 52 #1*52 #final simulation
 LNewInflowModel = false
 ResInitFrac = 0.60
 ResMinFrac = 0.05
@@ -21,22 +24,25 @@ MaxResScale = 1.0
 LoadScale = 1.0
 LineCapScale = 1.0
 CapReqFrac = 0.10
-CTR = ReSDDP.Control(LFeasCut,LFeasPerStage,LCostApprox,LCostApproxNewCuts,LWindStoch,LExtreme,MaxIter,CCMaxIter,ConvEps,NScen,
+CTR = ReSDDP.Control(LFeasCut,LFeasPerStage,LCostApprox,LCostApproxNewCuts,LWindStoch,LExtreme,MaxIter,CCMaxIter,MaxIterWCC,ConvEps,NScen,
                      NWindScen,NScenSim,NBranch,NStage,NStageSim,ResInitFrac,ResMinFrac,MaxResScale,LoadScale,LineCapScale,CapReqFrac)
+#CTR = ReSDDP.Control(LFeasCut,LFeasPerStage,LCostApprox,LCostApproxNewCuts,LWindStoch,LExtreme,MaxIter,CCMaxIter,ConvEps,NScen,
+                    # NWindScen,NScenSim,NBranch,NStage,NStageSim,ResInitFrac,ResMinFrac,MaxResScale,LoadScale,LineCapScale,CapReqFrac)
 
 #AGGREGATION DATA
-ModCutoff = 100
-ResCutoff = 10000.0
-ProdCutoff = 2000.0
-DeplCutoff = 1000.0
-CAGR = ReSDDP.Aggregation(ModCutoff,ResCutoff,ProdCutoff,DeplCutoff) 
+ModCutoff = 7#7
+ResCutoff = 250#250.0
+ProdCutoff = 250#250.0
+DeplCutoff = 0#0.0
+RegDegCutoff = 0.5#0.5
+CAGR = ReSDDP.Aggregation(ModCutoff,ResCutoff,ProdCutoff,DeplCutoff, RegDegCutoff) 
 
 #HORIZON AND TIME RESOLUTION
 NSecHour = 3600.0
 NHoursWeek = 168.0
 NInflowYear = 30 #50 (4del), 30 (Norge), 58 (Hydrocen), 30 (HydroConnect)
 NWeek = 52  #Dimensioning factor
-NK = 21 #168  #Time steps per week #21
+NK = 56 #168  #Time steps per week #21
 DT = NHoursWeek/Float64(NK)
 WeekFrac = 1.0/Float64(NK)
 CTI = ReSDDP.Time(NSecHour,NHoursWeek,NInflowYear,NWeek,NK,DT,WeekFrac)
