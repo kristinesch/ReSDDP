@@ -130,7 +130,7 @@ if simulate_only
     # Load strategy from file
     #file = joinpath(@__DIR__,"strategy.jld2") 
     file = File(format"JLD2", joinpath(@__DIR__, case*label*"strategy.jld2"))
-    #println(file)
+    println("Loading strategy from ", file)
     data = JLD2.load(file) 
     strategy = data["strategy"]
 
@@ -153,7 +153,7 @@ if simulate_only
         println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
     end
-    
+
     println("Loading feasibility cuts from ", file)
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
