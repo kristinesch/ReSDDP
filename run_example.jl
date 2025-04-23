@@ -150,9 +150,11 @@ if simulate_only
         else
             feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
         end
+        println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
     end
-
+    
+    println("Loading feasibility cuts from ", file)
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
 else
@@ -167,10 +169,12 @@ else
         else
             feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
         end
+        println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
     end
 
     # Load feasibility cuts from file
+    println("Loading feasibility cuts from ", file)
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
 
