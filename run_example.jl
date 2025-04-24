@@ -19,10 +19,14 @@ params_file = config["params_file"]
 #include("params.jl") # Import parameters
 include(params_file)
 
+println("reading params from ", params_file)
+
+println("Config file:    ")
+println(config)
 
 seed = 5
 Random.seed!(seed)
-println("seed: ", seed)
+println("Seed: ", seed)
 
 import JuMP
 import CPLEX
@@ -110,6 +114,9 @@ resultpath = joinpath(config["resultpath"], case_suffix_res)
 
 mkpath(resultpath)
 
+println("Resultpath: ", resultpath)
+println("Datapath: ", datapath)
+
 #load data
 model = load(datapath, parameters) 
 inflow_model = load_inflow(datapath, model, parameters)
@@ -145,11 +152,12 @@ if simulate_only
     if (calculate_feasibility_cuts)
         #Compute feasibility cuts 
         println("Compute feasibility cuts..")
-        if (areas_with_feas_cuts != [])
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        else
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
-        end
+        feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        # if (areas_with_feas_cuts != [])
+        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        # else
+        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+        # end
         println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
     end
@@ -157,18 +165,20 @@ if simulate_only
     println("Loading feasibility cuts from ", file)
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
+
+#If run the whole code
 else
-    # Save feasibility cuts to file
+    # Feasibility cuts file
     file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
 
     if (calculate_feasibility_cuts)
-        #Compute feasibility cuts 
         println("Compute feasibility cuts..")
-        if (areas_with_feas_cuts != [])
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        else
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
-        end
+        feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        # if (areas_with_feas_cuts != [])
+        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        # else
+        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+        # end
         println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
     end
@@ -185,10 +195,10 @@ else
 
     #Compute strategy by SDDP
     println("Start strategy computation..")
-    flush(stdout)
     train!(strategy, init_val, model, inflow_model, feas_spaces, parameters; optimizer=optimizer, datapath = resultpath)
     using Serialization
     serialize(joinpath(@__DIR__, case*label*"strategy.jls"), strategy) # Save cuts to file
+    println("Strategy saved to ", joinpath(@__DIR__, case*label*"strategy.jls"))
     strategy = deserialize(joinpath(@__DIR__, case*label*"strategy.jls")) # Load cuts from file
 
     if (save_strategy_to_file)
