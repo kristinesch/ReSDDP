@@ -152,12 +152,12 @@ if simulate_only
     if (calculate_feasibility_cuts)
         #Compute feasibility cuts 
         println("Compute feasibility cuts..")
-        feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        # if (areas_with_feas_cuts != [])
-        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        # else
-        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
-        # end
+        #feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        if (areas_with_feas_cuts != [])
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        else
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+        end
         println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
     end
@@ -173,12 +173,12 @@ else
 
     if (calculate_feasibility_cuts)
         println("Compute feasibility cuts..")
-        feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        # if (areas_with_feas_cuts != [])
-        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        # else
-        #     feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
-        # end
+        #feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        if (areas_with_feas_cuts != [])
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
+        else
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
+        end
         println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
     end
