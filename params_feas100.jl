@@ -1,3 +1,4 @@
+
 #CONTROL DATA
 LFeasCut = true #turn on/off the use of feasibility cuts
 LFeasPerStage = false #if false use feasibility cuts for first week for all stages
@@ -5,9 +6,9 @@ LCostApprox = true #true
 LCostApproxNewCuts = true #true     #i think both of these should be the same true/false state
 LWindStoch = false
 LExtreme = false
-MaxIter = 30
-CCMaxIter = 2
-MaxIterWCC = 5
+MaxIter = 100
+CCMaxIter = 5
+MaxIterWCC = 50
 ConvEps = 1.0E-3
 NScen = 40
 NWindScen = 5 #5
@@ -26,9 +27,9 @@ CTR = ReSDDP.Control(LFeasCut,LFeasPerStage,LCostApprox,LCostApproxNewCuts,LWind
                      NWindScen,NScenSim,NBranch,NStage,NStageSim,ResInitFrac,ResMinFrac,MaxResScale,LoadScale,LineCapScale,CapReqFrac)
 
 #AGGREGATION DATA
-ModCutoff = 7
-ResCutoff = 250.0
-ProdCutoff = 250.0
+ModCutoff = 1000000
+ResCutoff = 100000
+ProdCutoff = 100000
 DeplCutoff = 0.0
 RegDegCutoff = 0.5
 CAGR = ReSDDP.Aggregation(ModCutoff,ResCutoff,ProdCutoff,DeplCutoff,RegDegCutoff) 

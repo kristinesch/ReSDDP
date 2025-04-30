@@ -42,7 +42,6 @@ optimizer = JuMP.optimizer_with_attributes(
 #set_optimizer_attribute(model, "CPX_PARAM_SCRIND", 1)
 
 println("Threads available: ",Threads.nthreads())
-flush(stdout)
 
 # #case = "4area"
 # cases = ["4area","expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"]
@@ -66,7 +65,6 @@ label = config["label"]
 
 println(case, label)
 
-flush(stdout)
 
 #turn on or off different steps
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
@@ -118,7 +116,7 @@ println("Resultpath: ", resultpath)
 println("Datapath: ", datapath)
 
 #load data
-model = load(datapath, parameters) 
+model = load(datapath, parameters, resultpath) 
 inflow_model = load_inflow(datapath, model, parameters)
 
 println(model.AreaName)
@@ -132,7 +130,7 @@ using JLD2
 using FileIO 
 
 
-#NB GENERALISER!!!
+
 if simulate_only
     # Load strategy from file
     #file = joinpath(@__DIR__,"strategy.jld2") 
