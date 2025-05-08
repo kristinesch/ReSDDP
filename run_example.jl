@@ -59,6 +59,7 @@ flush(stdout)
 
 case = config["case"]
 label = config["label"]
+inflowdata = config["inflowdata"]
 
 println(case, label)
 
@@ -111,8 +112,8 @@ resultpath = joinpath(config["resultpath"], case_suffix_res)
 mkpath(resultpath)
 
 #load data
-model = load(datapath, parameters) 
-inflow_model = load_inflow(datapath, model, parameters)
+model = load(datapath, parameters,resultpath) 
+inflow_model = load_inflow(datapath, model, parameters, inflowdata)
 
 println(model.AreaName)
 #areas_to_ignore = ["NUMEDAL", "TERM"]
@@ -156,6 +157,9 @@ if simulate_only
     println("Loading feasibility cuts from ", file)
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
+
+
+    #println(feas_spaces)
 else
     # Save feasibility cuts to file
     file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
