@@ -164,6 +164,8 @@ if simulate_only
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
 
+    #println(feas_spaces)
+
 #If run the whole code
 else
     # Feasibility cuts file
@@ -212,7 +214,7 @@ end
 
 # Simulate aggregated
 println("Start simulation ..")
-results_agg = simulate_aggregated(model, inflow_model, parameters, strategy, feas_spaces, init_val)
+results_agg = simulate_aggregated(model, inflow_model, parameters, strategy, feas_spaces, init_val, optimizer=optimizer)
 
 # Print results to ASCII files 
 println("Writing results to "*resultpath)
@@ -228,7 +230,7 @@ end
 
 if (detailed_sim)
     println("Start detailed simulation ..")
-    results_det = simulate_detailed(model, inflow_model, parameters, strategy)
+    results_det = simulate_detailed(model, inflow_model, parameters, strategy, optimizer=optimizer)
 
     println("Write detailed results ..")
     print_detailed_results(resultpath,results_det,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.AHData)
