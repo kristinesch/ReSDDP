@@ -147,9 +147,9 @@ if simulate_only
         #Compute feasibility cuts 
         println("Compute feasibility cuts..")
         if (areas_with_feas_cuts != [])
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts, AreaMapping)
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
         else
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, AreaMapping)
+            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
         end
         println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
@@ -174,6 +174,7 @@ else
         end
         println("Saving feasibility cuts to ", file)
         save(file, "feas_spaces", feas_spaces)
+        print_feas(resultpath,feas_spaces[1],model.NHSys)
     end
 
     # Load feasibility cuts from file
@@ -215,7 +216,7 @@ print_results(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.
 print_dims(resultpath,model.NHSys,parameters.Control.NStage,parameters.Control.NScenSim,strategy.NCut,parameters.Control.MaxIter,parameters.Control.CCMaxIter)
 print_strategy(resultpath,strategy,parameters.Control.LCostApprox)
 print_feas(resultpath,feas_spaces[1],model.NHSys)
-print_results_h5(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time, model.MCon, model.AreaName)
+print_results_h5(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time, model.MCon, model.AreaName, model.AreaMapping)
 
 open(joinpath(resultpath,"NScen.txt"), "w") do file
     write(file, string(NScen))
