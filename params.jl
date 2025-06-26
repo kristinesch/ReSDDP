@@ -1,21 +1,21 @@
 #CONTROL DATA
-LFeasCut = true
+LFeasCut = false
 LFeasPerStage = false
 LCostApprox = true
 LCostApproxNewCuts = true
 LWindStoch = false
 LDemandResponse = false
 LExtreme = false
-MaxIter = 50
-CCMaxIter = 3
+MaxIter = 3
+CCMaxIter = 1
 MaxIterWCC = 5
 ConvEps = 1.0E-3
-NScen = 3
+NScen = 30
 NWindScen = 5
 NScenSim = 30
 NBranch = 10 #changed to fix loaderror  NResIdRead != NResid in inflow model for hydrocen data #7
-NStage = 1*52
-NStageSim =1*52
+NStage = 3*52
+NStageSim =2*52
 LNewInflowModel = false
 ResInitFrac = 0.60
 ResMinFrac = 0.10
@@ -40,7 +40,7 @@ NSecHour = 3600.0
 NHoursWeek = 168.0
 NInflowYear = 30 #50 (4del), 30 (Norge), 58 (Hydrocen), 30 (HydroConnect)
 NWeek = 52  #Dimensioning factor
-NK = 24  #Time steps per week
+NK = 21  #Time steps per week
 DT = NHoursWeek/Float64(NK)
 WeekFrac = 1.0/Float64(NK)
 CTI = ReSDDP.Time(NSecHour,NHoursWeek,NInflowYear,NWeek,NK,DT,WeekFrac)
