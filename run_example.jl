@@ -13,14 +13,11 @@ using Random
 
 import YAML
 
-#read config file
+#read config and params files
 config = YAML.load_file("config.yaml")
 params_file = config["params_file"]
-#include("params.jl") # Import parameters
+println("Reading params from ", params_file)
 include(params_file)
-
-println("reading params from ", params_file)
-
 println("Config file:    ")
 println(config)
 
@@ -38,40 +35,18 @@ optimizer = JuMP.optimizer_with_attributes(
     "CPX_PARAM_LPMETHOD" => 2 #1=primal, 2=dual, 3=network, 4=barrier
 )
 
-#to print log
-#set_optimizer_attribute(model, "CPX_PARAM_SCRIND", 1)
-
 println("Threads available: ",Threads.nthreads())
-
-# #case = "4area"
-# cases = ["4area","expanded_dem-h2pris45_headcorr_fansi-batt_increase50p"]
-
-# #for selecting which case to run
-# println("Select case: ")
-# for (i, c) in enumerate(cases)
-#     println(string(i)*": "*c)
-# end
-# case_i = readline()
-# case = cases[parse(Int64,case_i)]
-
-# #Enter optional extra label
-# label = ""
-# println("Enter label: ")
-# label = readline()
-
 
 case = config["case"]
 label = config["label"]
 
 println(case, label)
 
-
 #turn on or off different steps
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
 detailed_sim = true
 save_strategy_to_file = true
 simulate_only = true
-
 
 if (config["calculate_feasibility_cuts"] == "false")
     calculate_feasibility_cuts = false
@@ -114,26 +89,24 @@ mkpath(resultpath)
 
 println("Resultpath: ", resultpath)
 println("Datapath: ", datapath)
+inflowdata = config["inflowdata"]
+endvaluecuts = config["end_value_cuts"]
 
 #load data
-model = load(datapath, parameters, resultpath) 
-inflow_model = load_inflow(datapath, model, parameters)
-
-println(model.AreaName)
-#areas_to_ignore = ["NUMEDAL", "TERM"]
+model = load(datapath, parameters, resultpath, endvaluecuts) 
+inflow_model = load_inflow(datapath, model, parameters, inflowdata)
 
 areas_with_feas_cuts = config["areas_with_feas_cuts"]
-#areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
-#areas_to_ignore = ["SVER-ON1", "SVER-ON2", "SVER-NN1", "SVER-NN2", "SVER-MIDT", "SVER-SYD", "FINLAND", "DANM-OST", "DANM-VEST", "TYSK-OST", "TYSK-NORD", "TYSK-MIDT", "TYSK-SYD", "TYSK-SVEST", "TYSK-VEST", "TYSK-IVEST", "NEDERLAND", "BELGIA", "GB-SOUTH", "GB-MID", "GB-NORTH", "NORGEM-OWP", "VESTMI-OWP", "VESTSY-OWP", "SORLAN-OWP", "SVER-N-OWP", "SVER-M-OWP", "SVER-S-OWP", "FI-OWP", "DANM-O-OWP", "DANM-V-OWP", "TYSK-O-OWP", "TYSK-V-OWP", "NEDERL-OWP", "BELGIA-OWP", "GB-N-OWP", "GB-M-OWP", "GB-S-OWP", "FRANKRIKE", "SVEITS", "OSTERRIKE", "TSJEKKIA", "POLEN", "BALTIC", "DENMARK-H2", "FINLAND-H2", "FRANCE-H2", "GB-H2", "NETHERLANDS-H2", "POLAND-H2", "SWEDEN-H2", "CZE-H2", "GERMANY-H2", "BALTIC-H2", "H2-M", "H2-S", "H2-N", "SWITZERLAND-H2", "AUSTRIA-H2", "BELGIUM-H2", "TRANSIT-H2", "HELGEL-OWP", "TROMS-OWP", "FINNMA-OWP", "BALTIC-OWP", "FRANKR-OWP", "POLEN-OWP"]
+
+if LFeasCut == false 
+    areas_with_feas_cuts = []
+end
 
 using JLD2 
 using FileIO 
 
-
-
 if simulate_only
     # Load strategy from file
-    #file = joinpath(@__DIR__,"strategy.jld2") 
     file = File(format"JLD2", joinpath(@__DIR__, case*label*"strategy.jld2"))
     println("Loading strategy from ", file)
     data = JLD2.load(file) 
@@ -142,29 +115,11 @@ if simulate_only
     init_val = init_system(model, parameters)
 
     # Load feasibility cuts from file
-    #file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
-    #file = File(format"JLD2", joinpath(@__DIR__, "feas_spaces.jld2"))
     file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
-    #println(file)
-
-    if (calculate_feasibility_cuts)
-        #Compute feasibility cuts 
-        println("Compute feasibility cuts..")
-        #feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        if (areas_with_feas_cuts != [])
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer, areas_with_feas_cuts = areas_with_feas_cuts)
-        else
-            feas_spaces = feasibility(model, inflow_model, parameters, datapath; optimizer=optimizer)
-        end
-        println("Saving feasibility cuts to ", file)
-        save(file, "feas_spaces", feas_spaces)
-    end
 
     println("Loading feasibility cuts from ", file)
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
-
-    #println(feas_spaces)
 
 #If run the whole code
 else

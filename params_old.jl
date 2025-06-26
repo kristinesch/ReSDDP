@@ -1,24 +1,24 @@
 #CONTROL DATA
-LFeasCut = true
-LFeasPerStage = false
-LCostApprox = true
-LCostApproxNewCuts = true
+LFeasSpace = true #turn on/off the use of feasibility cuts
+LFeasPerStage = false #if false use feasibility cuts for first week for all stages
+LCostApprox = true #true
+LCostApproxNewCuts = true #true     #i think both of these should be the same true/false state
 LWindStoch = false
 LDemandResponse = false
 LExtreme = false
-MaxIter = 50
-CCMaxIter = 3
+MaxIter = 30
+CCMaxIter = 2
 MaxIterWCC = 5
 ConvEps = 1.0E-3
-NScen = 3
-NWindScen = 5
-NScenSim = 30
-NBranch = 10 #changed to fix loaderror  NResIdRead != NResid in inflow model for hydrocen data #7
-NStage = 1*52
-NStageSim =1*52
+NScen = 40
+NWindScen = 5 #5
+NScenSim = 10 #10
+NResid = NBranch = 10 #changed to fix loaderror  NResIdRead != NResid in inflow model for hydrocen data #5
+NStage = 2*52 #strategi
+NStageSim = 2 #1*52 #final simulation
 LNewInflowModel = false
 ResInitFrac = 0.60
-ResMinFrac = 0.10
+ResMinFrac = 0.05
 MaxResScale = 1.0
 LoadScale = 1.0
 LineCapScale = 1.0
@@ -29,8 +29,8 @@ CTR = ReSDDP.Control(LFeasCut,LFeasPerStage,LCostApprox,LCostApproxNewCuts,LWind
 
 #AGGREGATION DATA
 ModCutoff = 7
-ResCutoff = 25000000000.0
-ProdCutoff = 25000000000.0
+ResCutoff = 250.0
+ProdCutoff = 250.0
 DeplCutoff = 0.0
 RegDegCutoff = 0.5
 CAGR = ReSDDP.Aggregation(ModCutoff,ResCutoff,ProdCutoff,DeplCutoff,RegDegCutoff) 
@@ -40,7 +40,7 @@ NSecHour = 3600.0
 NHoursWeek = 168.0
 NInflowYear = 30 #50 (4del), 30 (Norge), 58 (Hydrocen), 30 (HydroConnect)
 NWeek = 52  #Dimensioning factor
-NK = 24  #Time steps per week
+NK = 56 #168  #Time steps per week #21
 DT = NHoursWeek/Float64(NK)
 WeekFrac = 1.0/Float64(NK)
 CTI = ReSDDP.Time(NSecHour,NHoursWeek,NInflowYear,NWeek,NK,DT,WeekFrac)
@@ -56,11 +56,11 @@ CResPen = 1.0
 CRampPen = 1.0
 CCapPen = 1.0
 CAuxPen = 10.0
-CSpi = 2.0E-3
-CByp = 1.0E-3
+CSpi = 2.0E-3 #2.0E-3
+CByp = 1.0E-3 #1.0E-3
 CNegRes = 1.0E4
-CMinRes = 5.0
-CRat = 4.0E2
+CMinRes = 2.0
+CRat = 4.0E3
 CFeas = 1.0E2
 Big = 1.0E16
 AlphaMax = 1E18
@@ -68,13 +68,13 @@ InfUB = 1.0E08
 FeasTol = 1.0E-3
 CNS = ReSDDP.Constants(MAGEFF2GWH,GWH2MAGEFF,MW2GWHWEEK,MW2GW,M3S2MM3,CEnPen,CResPen,CRampPen,CCapPen,CAuxPen,CSpi,CByp,CNegRes,CMinRes,CRat,CFeas,Big,AlphaMax,InfUB,FeasTol)
 
-#DISCRETIZATION OF FEASIBILITY SPACES
-NInfPt = 5 
-NResInitPt = 5
+#DISCRETIZATION OF FEASIBILITY SPACES #number of points along each axis of the feasibility space
+NInfPt = 5 # number of points along inflow axis
+NResInitPt = 5 
 NResEndPt = 5
-NEnPt = 5
-NRampPt = 5
-NCapPt = 2
+NEnPt = 5 #number of points along energy axis
+NRampPt = 2
+NCapPt = 2 #number of points along capacity axis
 CDI = ReSDDP.Discrete(NInfPt,NResInitPt,NResEndPt,NEnPt,NRampPt,NCapPt)
 
 parameters = ReSDDP.Parameters(CTR, CAGR, CTI, CNS, CDI)
