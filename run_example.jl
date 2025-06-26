@@ -13,9 +13,32 @@ using Random
 
 import YAML
 
-#read config and params files
+#read config file
 config = YAML.load_file("config.yaml")
-params_file = config["params_file"]
+
+case = config["case"]
+label = config["label"]
+println(case, label)
+
+#Set parameters according to case
+if case == "base"
+    areas_with_feas_cuts = []
+    params_file = "params_base.jl"
+    datafolder = "orig_hydro"
+end
+if case == "feas"
+    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+    params_file = "params_feas.jl"
+    datafolder = "orig_hydro"
+end
+if case == "feas_det"
+    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+    params_file = "params_feas_det.jl"
+    datafolder = "detailed_hydro"
+end
+
+
+println("Areas with feas cuts: ", areas_with_feas_cuts)
 println("Reading params from ", params_file)
 include(params_file)
 println("Config file:    ")
@@ -37,11 +60,6 @@ optimizer = JuMP.optimizer_with_attributes(
 
 println("Threads available: ",Threads.nthreads())
 
-case = config["case"]
-label = config["label"]
-
-println(case, label)
-
 #turn on or off different steps
 calculate_feasibility_cuts = true #set to false if already done, needs to be true for first run
 detailed_sim = true
@@ -61,18 +79,17 @@ if (config["simulate_only"] == "false")
     simulate_only = false
 end
 
-if LFeasCut == true
-    if !LFeasPerStage == true
-        label = label*"-feas1"
-    else
-        label = label*"-feasN"
-    end
-end
+# if LFeasCut == true
+#     if !LFeasPerStage == true
+#         label = label*"-feas1"
+#     else
+#         label = label*"-feasN"
+#     end
+# end
 
-label = label*"-"*string(NScen)*"-"*string(NK)
+label = "-"*label*"-"*string(NScen)*"-"*string(NK)
 
 #set paths to input data and result folder from config file
-
 system = config["system"]
 if (system=="win")
     case_suffix = case*"\\"
@@ -82,25 +99,15 @@ if (system=="linux")
     case_suffix = case*"/"
     case_suffix_res = case*label*"/"
 end
-datapath = joinpath(config["datapath"], case_suffix)
+datapath = joinpath(config["datapath"], datafolder*"\\")
 resultpath = joinpath(config["resultpath"], case_suffix_res)
-
-mkpath(resultpath)
-
+mkpath(resultpath) #create result folder
 println("Resultpath: ", resultpath)
 println("Datapath: ", datapath)
-inflowdata = config["inflowdata"]
-endvaluecuts = config["end_value_cuts"]
 
 #load data
-model = load(datapath, parameters, resultpath, endvaluecuts) 
-inflow_model = load_inflow(datapath, model, parameters, inflowdata)
-
-areas_with_feas_cuts = config["areas_with_feas_cuts"]
-
-if LFeasCut == false 
-    areas_with_feas_cuts = []
-end
+model = load(datapath, parameters, resultpath) 
+inflow_model = load_inflow(datapath, model, parameters)
 
 using JLD2 
 using FileIO 
@@ -116,7 +123,6 @@ if simulate_only
 
     # Load feasibility cuts from file
     file = File(format"JLD2", joinpath(@__DIR__, case*label*"feas_spaces.jld2"))
-
     println("Loading feasibility cuts from ", file)
     data = JLD2.load(file) 
     feas_spaces = data["feas_spaces"]
