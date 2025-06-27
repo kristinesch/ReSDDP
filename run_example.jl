@@ -94,12 +94,14 @@ system = config["system"]
 if (system=="win")
     case_suffix = case*"\\"
     case_suffix_res = case*label*"\\"
+    datapath = joinpath(config["datapath"], datafolder*"\\")
 end
 if (system=="linux")
     case_suffix = case*"/"
     case_suffix_res = case*label*"/"
+    datapath = joinpath(config["datapath"], datafolder*"/")
 end
-datapath = joinpath(config["datapath"], datafolder*"\\")
+
 resultpath = joinpath(config["resultpath"], case_suffix_res)
 mkpath(resultpath) #create result folder
 println("Resultpath: ", resultpath)
@@ -179,11 +181,12 @@ results_agg = simulate_aggregated(model, inflow_model, parameters, strategy, fea
 
 # Print results to ASCII files 
 println("Writing results to "*resultpath)
-print_results(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time)
-print_dims(resultpath,model.NHSys,parameters.Control.NStage,parameters.Control.NScenSim,strategy.NCut,parameters.Control.MaxIter,parameters.Control.CCMaxIter)
+# print_results(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time)
+print_results(resultpath,results_agg,model,parameters)
+print_dims(resultpath,model.NHSys,model.H2Data.NArea,parameters.Control.NStage,parameters.Control.NScenSim,strategy.NCut,parameters.Control.MaxIter,parameters.Control.CCMaxIter)
 print_strategy(resultpath,strategy,parameters.Control.LCostApprox)
 print_feas(resultpath,feas_spaces[1],model.NHSys)
-print_results_h5(resultpath,results_agg,model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time, model.MCon, model.AreaName)
+print_results_h5(model.HSys,resultpath,results_agg, model.NArea,model.NHSys,parameters.Control.NScenSim,parameters.Control.NStageSim,parameters.Time.NK,model.NLine,parameters.Time,model.MCon, model.AreaName)
 
 open(joinpath(resultpath,"NScen.txt"), "w") do file
     write(file, string(NScen))
