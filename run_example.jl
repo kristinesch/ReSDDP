@@ -36,11 +36,18 @@ if case == "feas_det"
     params_file = "params_feas_det.jl"
     datafolder = "detailed_hydro"
 end
+if case == "feas_det_deterministic"
+    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+    params_file = "params_feas_det_deterministic.jl"
+    datafolder = "detailed_hydro_deterministic"
+end
 
 
 println("Areas with feas cuts: ", areas_with_feas_cuts)
 println("Reading params from ", params_file)
 include(params_file)
+
+println(NScen)
 println("Config file:    ")
 println(config)
 
@@ -174,6 +181,10 @@ else
         strategy = data["strategy"]
     end
 end
+
+seed = 5
+Random.seed!(seed)
+println("Seed: ", seed)
 
 # Simulate aggregated
 println("Start simulation ..")
