@@ -31,6 +31,16 @@ if case == "feas"
     params_file = "params_feas.jl"
     datafolder = "orig_hydro"
 end
+if case == "base_det_end_value_cuts"
+    areas_with_feas_cuts = []
+    params_file = "params_base.jl"
+    datafolder = "orig_hydro_det_end_value_cuts"
+end
+if case == "feas_det_end_value_cuts"
+    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+    params_file = "params_feas.jl"
+    datafolder = "orig_hydro_det_end_value_cuts"
+end
 if case == "base_h2_10000"
     areas_with_feas_cuts = []
     params_file = "params_base.jl"
