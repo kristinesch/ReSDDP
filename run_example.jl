@@ -86,7 +86,11 @@ if case == "feas_det_deterministic"
     params_file = "params_feas_det_deterministic.jl"
     datafolder = "detailed_hydro_deterministic"
 end
-
+if case == "feas_det_h2_100000"
+    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+    params_file = "params_feas_det.jl"
+    datafolder = "detailed_hydro_h2_100000"
+end
 
 println("Areas with feas cuts: ", areas_with_feas_cuts)
 println("Reading params from ", params_file)
