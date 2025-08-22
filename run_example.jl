@@ -21,76 +21,98 @@ label = config["label"]
 println(case, label)
 
 #Set parameters according to case
+
+if case == "base0"
+    areas_with_feas_cuts = []
+    params_file = "params_base0.jl"
+    datafolder = "D0"
+end
 if case == "base"
     areas_with_feas_cuts = []
     params_file = "params_base.jl"
-    datafolder = "orig_hydro"
+    datafolder = "D1_orig_hydro"
 end
 if case == "feas"
     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
     params_file = "params_feas.jl"
-    datafolder = "orig_hydro"
+    datafolder = "D1_orig_hydro"
 end
-
-if case == "base_det_end_value_cuts"
-    areas_with_feas_cuts = []
-    params_file = "params_base.jl"
-    datafolder = "orig_hydro_det_end_value_cuts"
-end
-if case == "feas_det_end_value_cuts"
-    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
-    params_file = "params_feas.jl"
-    datafolder = "orig_hydro_det_end_value_cuts"
-end
-
-if case == "base_h2_10000"
-    areas_with_feas_cuts = []
-    params_file = "params_base.jl"
-    datafolder = "orig_hydro_h210000"
-end
-if case == "feas_h2_10000"
-    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
-    params_file = "params_feas.jl"
-    datafolder = "orig_hydro_h210000"
-end
-
-if case == "base_h2_50000"
-    areas_with_feas_cuts = []
-    params_file = "params_base.jl"
-    datafolder = "orig_hydro_h2_50000"
-end
-if case == "feas_h2_50000"
-    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
-    params_file = "params_feas.jl"
-    datafolder = "orig_hydro_h2_50000"
-end
-
-if case == "base_h2_100000"
-    areas_with_feas_cuts = []
-    params_file = "params_base.jl"
-    datafolder = "orig_hydro_h2100000"
-end
-if case == "feas_h2_100000"
-    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
-    params_file = "params_feas.jl"
-    datafolder = "orig_hydro_h2100000"
-end
-
 if case == "feas_det"
     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
     params_file = "params_feas_det.jl"
-    datafolder = "detailed_hydro"
+    datafolder = "D2"
 end
-if case == "feas_det_deterministic"
-    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
-    params_file = "params_feas_det_deterministic.jl"
-    datafolder = "detailed_hydro_deterministic"
-end
-if case == "feas_det_h2_100000"
-    areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
-    params_file = "params_feas_det.jl"
-    datafolder = "detailed_hydro_h2_100000"
-end
+
+# if case == "base"
+#     areas_with_feas_cuts = []
+#     params_file = "params_base.jl"
+#     datafolder = "orig_hydro"
+# end
+# if case == "feas"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas.jl"
+#     datafolder = "orig_hydro"
+# end
+
+# if case == "base_det_end_value_cuts"
+#     areas_with_feas_cuts = []
+#     params_file = "params_base.jl"
+#     datafolder = "orig_hydro_det_end_value_cuts"
+# end
+# if case == "feas_det_end_value_cuts"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas.jl"
+#     datafolder = "orig_hydro_det_end_value_cuts"
+# end
+
+# if case == "base_h2_10000"
+#     areas_with_feas_cuts = []
+#     params_file = "params_base.jl"
+#     datafolder = "orig_hydro_h210000"
+# end
+# if case == "feas_h2_10000"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas.jl"
+#     datafolder = "orig_hydro_h210000"
+# end
+
+# if case == "base_h2_50000"
+#     areas_with_feas_cuts = []
+#     params_file = "params_base.jl"
+#     datafolder = "orig_hydro_h2_50000"
+# end
+# if case == "feas_h2_50000"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas.jl"
+#     datafolder = "orig_hydro_h2_50000"
+# end
+
+# if case == "base_h2_100000"
+#     areas_with_feas_cuts = []
+#     params_file = "params_base.jl"
+#     datafolder = "orig_hydro_h2100000"
+# end
+# if case == "feas_h2_100000"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas.jl"
+#     datafolder = "orig_hydro_h2100000"
+# end
+
+# if case == "feas_det"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas_det.jl"
+#     datafolder = "detailed_hydro"
+# end
+# if case == "feas_det_deterministic"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas_det_deterministic.jl"
+#     datafolder = "detailed_hydro_deterministic"
+# end
+# if case == "feas_det_h2_100000"
+#     areas_with_feas_cuts = ["OSTLAND", "SOROST", "HALLINGDAL", "TELEMARK", "SORLAND", "VESTSYD", "VESTMIDT", "NORGEMIDT", "HELGELAND", "TROMS", "FINNMARK"]
+#     params_file = "params_feas_det.jl"
+#     datafolder = "detailed_hydro_h2_100000"
+# end
 
 println("Areas with feas cuts: ", areas_with_feas_cuts)
 println("Reading params from ", params_file)
