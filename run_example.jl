@@ -24,7 +24,7 @@ println(case, label)
 
 if case == "base0"
     areas_with_feas_cuts = []
-    params_file = "params_base0.jl"
+    params_file = "params_base.jl"
     datafolder = "D0"
 end
 if case == "base"
